@@ -458,6 +458,12 @@ class VntConfig {
   final int packetDelay;
   final List<String> portMappingList;
   final String compressor;
+  // KCP/QUIC 代理配置
+  final bool enableKcpSrc;
+  final bool enableKcpDst;
+  final bool enableQuicSrc;
+  final bool enableQuicDst;
+  final int quicListenPort;
 
   const VntConfig({
     required this.tap,
@@ -485,6 +491,11 @@ class VntConfig {
     required this.packetDelay,
     required this.portMappingList,
     required this.compressor,
+    required this.enableKcpSrc,
+    required this.enableKcpDst,
+    required this.enableQuicSrc,
+    required this.enableQuicDst,
+    required this.quicListenPort,
   });
 
   @override
@@ -513,7 +524,12 @@ class VntConfig {
       packetLossRate.hashCode ^
       packetDelay.hashCode ^
       portMappingList.hashCode ^
-      compressor.hashCode;
+      compressor.hashCode ^
+      enableKcpSrc.hashCode ^
+      enableKcpDst.hashCode ^
+      enableQuicSrc.hashCode ^
+      enableQuicDst.hashCode ^
+      quicListenPort.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -544,5 +560,10 @@ class VntConfig {
           packetLossRate == other.packetLossRate &&
           packetDelay == other.packetDelay &&
           portMappingList == other.portMappingList &&
-          compressor == other.compressor;
+          compressor == other.compressor &&
+          enableKcpSrc == other.enableKcpSrc &&
+          enableKcpDst == other.enableKcpDst &&
+          enableQuicSrc == other.enableQuicSrc &&
+          enableQuicDst == other.enableQuicDst &&
+          quicListenPort == other.quicListenPort;
 }

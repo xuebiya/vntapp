@@ -26,6 +26,15 @@ class NetworkConfig {
   String punchModel;
   String useChannelType;
   String compressor;
+  
+  // KCP Proxy 配置
+  bool enableKcpSrc;      // 启用 KCP 代理源（出站连接）
+  bool enableKcpDst;      // 启用 KCP 代理目标（入站连接）
+  
+  // QUIC Proxy 配置
+  bool enableQuicSrc;     // 启用 QUIC 代理源（出站连接）
+  bool enableQuicDst;     // 启用 QUIC 代理目标（入站连接）
+  int quicListenPort;     // QUIC 监听端口（0 为自动分配）
 
   NetworkConfig({
     required this.itemKey,
@@ -55,6 +64,11 @@ class NetworkConfig {
     required this.punchModel,
     required this.useChannelType,
     required this.compressor,
+    this.enableKcpSrc = false,
+    this.enableKcpDst = false,
+    this.enableQuicSrc = false,
+    this.enableQuicDst = false,
+    this.quicListenPort = 0,
   });
   Map<String, dynamic> toJson() {
     return {
@@ -70,7 +84,7 @@ class NetworkConfig {
       'mapping': portMappings,
       'password': groupPassword,
       'server_encrypt': isServerEncrypted,
-      'tcp': protocol,
+      'protocol': protocol,
       'finger': dataFingerprintVerification,
       'cipher_model': encryptionAlgorithm,
       'device_id': deviceID,
@@ -85,6 +99,11 @@ class NetworkConfig {
       'punch_model': punchModel,
       'use_channel': useChannelType,
       'compressor': compressor,
+      'enable_kcp_src': enableKcpSrc,
+      'enable_kcp_dst': enableKcpDst,
+      'enable_quic_src': enableQuicSrc,
+      'enable_quic_dst': enableQuicDst,
+      'quic_listen_port': quicListenPort,
     };
   }
 
@@ -117,6 +136,11 @@ class NetworkConfig {
       if (punchModel.isNotEmpty) 'punch_model': punchModel,
       if (useChannelType.isNotEmpty) 'use_channel': useChannelType,
       if (compressor.isNotEmpty) 'compressor': compressor,
+      if (enableKcpSrc) 'enable_kcp_src': enableKcpSrc,
+      if (enableKcpDst) 'enable_kcp_dst': enableKcpDst,
+      if (enableQuicSrc) 'enable_quic_src': enableQuicSrc,
+      if (enableQuicDst) 'enable_quic_dst': enableQuicDst,
+      if (quicListenPort != 0) 'quic_listen_port': quicListenPort,
     };
   }
 
@@ -149,6 +173,11 @@ class NetworkConfig {
       punchModel: json['punch_model'],
       useChannelType: json['use_channel'],
       compressor: json['compressor'] ?? 'none',
+      enableKcpSrc: json['enable_kcp_src'] ?? false,
+      enableKcpDst: json['enable_kcp_dst'] ?? false,
+      enableQuicSrc: json['enable_quic_src'] ?? false,
+      enableQuicDst: json['enable_quic_dst'] ?? false,
+      quicListenPort: json['quic_listen_port'] ?? 0,
     );
   }
 }

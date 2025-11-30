@@ -52,6 +52,12 @@ class VntBox {
       packetDelay: config.simulatedLatency,
       portMappingList: config.portMappings,
       compressor: config.compressor.isEmpty ? 'none' : config.compressor,
+      // KCP/QUIC 代理配置
+      enableKcpSrc: config.enableKcpSrc,
+      enableKcpDst: config.enableKcpDst,
+      enableQuicSrc: config.enableQuicSrc,
+      enableQuicDst: config.enableQuicDst,
+      quicListenPort: config.quicListenPort,
     );
     var vntCall = VntApiCallback(successFn: () {
       uiCall.send('success');

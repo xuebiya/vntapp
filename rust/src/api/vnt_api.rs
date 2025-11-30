@@ -90,6 +90,12 @@ pub struct VntConfig {
     // 端口映射
     pub port_mapping_list: Vec<String>,
     pub compressor: String,
+    // KCP/QUIC 代理配置
+    pub enable_kcp_src: bool,
+    pub enable_kcp_dst: bool,
+    pub enable_quic_src: bool,
+    pub enable_quic_dst: bool,
+    pub quic_listen_port: u16,
 }
 
 pub struct VntApi {

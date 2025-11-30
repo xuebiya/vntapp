@@ -1534,8 +1534,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   VntConfig dco_decode_vnt_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 25)
-      throw Exception('unexpected arr length: expect 25 but see ${arr.length}');
+    if (arr.length != 30)
+      throw Exception('unexpected arr length: expect 30 but see ${arr.length}');
     return VntConfig(
       tap: dco_decode_bool(arr[0]),
       token: dco_decode_String(arr[1]),
@@ -1562,6 +1562,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       packetDelay: dco_decode_u_32(arr[22]),
       portMappingList: dco_decode_list_String(arr[23]),
       compressor: dco_decode_String(arr[24]),
+      enableKcpSrc: dco_decode_bool(arr[25]),
+      enableKcpDst: dco_decode_bool(arr[26]),
+      enableQuicSrc: dco_decode_bool(arr[27]),
+      enableQuicDst: dco_decode_bool(arr[28]),
+      quicListenPort: dco_decode_u_16(arr[29]),
     );
   }
 
@@ -2116,6 +2121,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_packetDelay = sse_decode_u_32(deserializer);
     var var_portMappingList = sse_decode_list_String(deserializer);
     var var_compressor = sse_decode_String(deserializer);
+    var var_enableKcpSrc = sse_decode_bool(deserializer);
+    var var_enableKcpDst = sse_decode_bool(deserializer);
+    var var_enableQuicSrc = sse_decode_bool(deserializer);
+    var var_enableQuicDst = sse_decode_bool(deserializer);
+    var var_quicListenPort = sse_decode_u_16(deserializer);
     return VntConfig(
         tap: var_tap,
         token: var_token,
@@ -2141,7 +2151,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         packetLossRate: var_packetLossRate,
         packetDelay: var_packetDelay,
         portMappingList: var_portMappingList,
-        compressor: var_compressor);
+        compressor: var_compressor,
+        enableKcpSrc: var_enableKcpSrc,
+        enableKcpDst: var_enableKcpDst,
+        enableQuicSrc: var_enableQuicSrc,
+        enableQuicDst: var_enableQuicDst,
+        quicListenPort: var_quicListenPort);
   }
 
   @protected
@@ -2714,5 +2729,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_u_32(self.packetDelay, serializer);
     sse_encode_list_String(self.portMappingList, serializer);
     sse_encode_String(self.compressor, serializer);
+    sse_encode_bool(self.enableKcpSrc, serializer);
+    sse_encode_bool(self.enableKcpDst, serializer);
+    sse_encode_bool(self.enableQuicSrc, serializer);
+    sse_encode_bool(self.enableQuicDst, serializer);
+    sse_encode_u_16(self.quicListenPort, serializer);
   }
 }

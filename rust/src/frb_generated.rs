@@ -1885,6 +1885,11 @@ impl SseDecode for crate::api::vnt_api::VntConfig {
         let mut var_packetDelay = <u32>::sse_decode(deserializer);
         let mut var_portMappingList = <Vec<String>>::sse_decode(deserializer);
         let mut var_compressor = <String>::sse_decode(deserializer);
+        let mut var_enableKcpSrc = <bool>::sse_decode(deserializer);
+        let mut var_enableKcpDst = <bool>::sse_decode(deserializer);
+        let mut var_enableQuicSrc = <bool>::sse_decode(deserializer);
+        let mut var_enableQuicDst = <bool>::sse_decode(deserializer);
+        let mut var_quicListenPort = <u16>::sse_decode(deserializer);
         return crate::api::vnt_api::VntConfig {
             tap: var_tap,
             token: var_token,
@@ -1911,6 +1916,11 @@ impl SseDecode for crate::api::vnt_api::VntConfig {
             packet_delay: var_packetDelay,
             port_mapping_list: var_portMappingList,
             compressor: var_compressor,
+            enable_kcp_src: var_enableKcpSrc,
+            enable_kcp_dst: var_enableKcpDst,
+            enable_quic_src: var_enableQuicSrc,
+            enable_quic_dst: var_enableQuicDst,
+            quic_listen_port: var_quicListenPort,
         };
     }
 }
@@ -2273,6 +2283,11 @@ impl flutter_rust_bridge::IntoDart for crate::api::vnt_api::VntConfig {
             self.packet_delay.into_into_dart().into_dart(),
             self.port_mapping_list.into_into_dart().into_dart(),
             self.compressor.into_into_dart().into_dart(),
+            self.enable_kcp_src.into_into_dart().into_dart(),
+            self.enable_kcp_dst.into_into_dart().into_dart(),
+            self.enable_quic_src.into_into_dart().into_dart(),
+            self.enable_quic_dst.into_into_dart().into_dart(),
+            self.quic_listen_port.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2771,6 +2786,11 @@ impl SseEncode for crate::api::vnt_api::VntConfig {
         <u32>::sse_encode(self.packet_delay, serializer);
         <Vec<String>>::sse_encode(self.port_mapping_list, serializer);
         <String>::sse_encode(self.compressor, serializer);
+        <bool>::sse_encode(self.enable_kcp_src, serializer);
+        <bool>::sse_encode(self.enable_kcp_dst, serializer);
+        <bool>::sse_encode(self.enable_quic_src, serializer);
+        <bool>::sse_encode(self.enable_quic_dst, serializer);
+        <u16>::sse_encode(self.quic_listen_port, serializer);
     }
 }
 

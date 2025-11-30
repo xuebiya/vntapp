@@ -53,6 +53,13 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
   String _compressionMethod = 'none'; // 默认不压缩
   int _compressionLevel = 3; // 默认压缩级别
 
+  // KCP/QUIC 代理配置
+  bool _enableKcpSrc = false;
+  bool _enableKcpDst = false;
+  bool _enableQuicSrc = false;
+  bool _enableQuicDst = false;
+  final _quicListenPortController = TextEditingController(text: '0');
+
   _NetworkConfigInputPageState() {}
 
   @override
@@ -147,6 +154,13 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
         _compressionLevel = int.tryParse(arr[1]) ?? 3;
       }
     }
+    // 加载 KCP/QUIC 代理配置
+    _enableKcpSrc = config.enableKcpSrc;
+    _enableKcpDst = config.enableKcpDst;
+    _enableQuicSrc = config.enableQuicSrc;
+    _enableQuicDst = config.enableQuicDst;
+    _quicListenPortController.text = config.quicListenPort.toString();
+    
     setState(() {
       _routingMode = config.firstLatency ? 'LOW_LATENCY' : 'P2P';
       _builtInIpProxy = config.noInIpProxy ? 'CLOSE' : 'OPEN';
@@ -226,6 +240,11 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
             : (_p2pSelected ? 'p2p' : 'relay'),
         compressor:
             '$_compressionMethod${_compressionMethod == 'zstd' ? ',$_compressionLevel' : ''}',
+        enableKcpSrc: _enableKcpSrc,
+        enableKcpDst: _enableKcpDst,
+        enableQuicSrc: _enableQuicSrc,
+        enableQuicDst: _enableQuicDst,
+        quicListenPort: int.tryParse(_quicListenPortController.text) ?? 0,
       );
       Navigator.pop(context, config);
     } else {
@@ -693,6 +712,62 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                         _addController,
                         _removeController,
                       ),
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('高级代理 (KCP/QUIC)'),
+                      const SizedBox(height: 10),
+                      _buildProxyCheckboxGroup(
+                        'KCP 代理',
+                        '出站 (Src)',
+                        '入站 (Dst)',
+                        _enableKcpSrc,
+                        _enableKcpDst,
+                        (value) {
+                          setState(() {
+                            _enableKcpSrc = value ?? false;
+                          });
+                        },
+                        (value) {
+                          setState(() {
+                            _enableKcpDst = value ?? false;
+                          });
+                        },
+                        'KCP 提供可靠的 UDP 传输，适用于高丢包网络环境',
+                      ),
+                      _buildProxyCheckboxGroup(
+                        'QUIC 代理',
+                        '出站 (Src)',
+                        '入站 (Dst)',
+                        _enableQuicSrc,
+                        _enableQuicDst,
+                        (value) {
+                          setState(() {
+                            _enableQuicSrc = value ?? false;
+                          });
+                        },
+                        (value) {
+                          setState(() {
+                            _enableQuicDst = value ?? false;
+                          });
+                        },
+                        'QUIC 提供安全、低延迟的传输，适用于需要加密的场景',
+                      ),
+                      if (_enableQuicSrc || _enableQuicDst)
+                        _buildTextFormField(
+                          _quicListenPortController,
+                          'QUIC 监听端口 (0=自动)',
+                          null,
+                          (value) {
+                            if (value == null || value.isEmpty) {
+                              return null;
+                            }
+                            final n = int.tryParse(value);
+                            if (n == null || n < 0 || n > 65535) {
+                              return '请输入0到65535之间的数字';
+                            }
+                            return null;
+                          },
+                          TextInputType.number,
+                        ),
                     ],
                   ),
                 ),
@@ -945,6 +1020,61 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _buildProxyCheckboxGroup(
+    String title,
+    String valueName1,
+    String valueName2,
+    bool selectedValue1,
+    bool selectedValue2,
+    ValueChanged<bool?> onChanged1,
+    ValueChanged<bool?> onChanged2,
+    String tooltip,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+                    const SizedBox(width: 4),
+                    Tooltip(
+                      message: tooltip,
+                      child: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: selectedValue1,
+                      onChanged: onChanged1,
+                    ),
+                    Text(valueName1),
+                    const SizedBox(width: 16),
+                    Checkbox(
+                      value: selectedValue2,
+                      onChanged: onChanged2,
+                    ),
+                    Text(valueName2),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
